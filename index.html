@@ -1,0 +1,133 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+       <meta charset="utf-8">
+       <!--
+    
+    TRASH MAGIC!
+    
+       -->
+       <!--Stop Google:-->
+       <META NAME="robots" CONTENT="noindex,nofollow">
+  
+<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AAD/3wAAH6gAAO93AAD3fwAA9v8AAPb/AAD2/wAA9v8AAPr/AAD9/wAA//8AAP//AAD//wAA" rel="icon" type="image/x-icon">
+  
+      <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>    
+       <title>TIMEWAVE</title>    
+    </head>
+    <body>    
+            
+            <h2>
+            <a href = "edit.html">EDIT THIS PAGE</a>
+                
+            </h2>
+
+
+<script>
+
+    
+squaresize = 400;
+
+function preload() {
+  img = loadImage('dataplot.png');
+}
+function setup() {
+
+  createCanvas(squaresize, squaresize);    
+///  image(img, 50, -150, squaresize, squaresize);
+  //image(img, 25, 25, 50, 50, 25, 25, 50, 50);
+image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN)
+
+}
+
+
+
+function draw(){
+
+  frameRate(30);
+
+}
+
+
+/*
+image(img, dx, dy, dWidth, dHeight, sx, sy, [sWidth], [sHeight], [fit], [xAlign], [yAlign])
+img
+p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture:
+
+image to display.
+x
+Number:
+
+x-coordinate of the top-left corner of the image.
+y
+Number:
+
+y-coordinate of the top-left corner of the image.
+width
+Number:
+
+width to draw the image.
+height
+Number:
+
+height to draw the image.
+dx
+Number:
+
+the x-coordinate of the destination rectangle in which to draw the source image
+dy
+Number:
+
+the y-coordinate of the destination rectangle in which to draw the source image
+dWidth
+Number:
+
+the width of the destination rectangle
+dHeight
+Number:
+
+the height of the destination rectangle
+sx
+Number:
+
+the x-coordinate of the subsection of the source image to draw into the destination rectangle
+sy
+Number:
+
+the y-coordinate of the subsection of the source image to draw into the destination rectangle
+sWidth
+Number:
+
+the width of the subsection of the source image to draw into the destination rectangle
+sHeight
+Number:
+
+the height of the subsection of the source image to draw into the destination rectangle
+fit
+Constant:
+
+either CONTAIN or COVER
+xAlign
+Constant:
+
+either LEFT, RIGHT or CENTER default is CENTER
+yAlign
+Constant:
+
+either TOP, BOTTOM or CENTER default is CENTER
+*/
+
+</script>
+<STYLE>
+    H1{
+        TEXT-ALIGN:CENTER;
+    }
+    a{
+        color:blue;
+    }
+</STYLE>
+
+    </body>
+    </html>
+    
+    
