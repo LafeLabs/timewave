@@ -22,101 +22,170 @@
                 
             </h2>
 
+<table>
+    <tr>
+        <td>START X:</td>
+        <td>
+            <input id = "startxinput">
+        </td>
+    </tr>
+    <tr>
+        <td>STOP X:</td>
+        <td>
+            <input id = "stopxinput">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            TIMEWAVE: 
+        </td>
+        <TD>
+            <INPUT ID = "timewaveinput">
+        </TD>
+    </tr>
+</table>
 
 <script>
 
+//document.getElementById("actioninput").select();
     
-squaresize = 400;
 
 function preload() {
   img = loadImage('dataplot.png');
 }
+
+imagex = 0;
+imagey = 0;
+deltaxy = 100;
+zoom = 1;
+startx = 117;
+stopx = 417;
+y0 = 400;
+y1 = 200;
+y1value = 10;
+y0value = 0;
+
+timewave = [0];
+
 function setup() {
 
-  createCanvas(squaresize, squaresize);    
+  createCanvas(800, 600);    
+//  image(img, -50, 0, width, height, 0, 0, img.width, img.height, CONTAIN)
+ // image(img, imagex, imagey,width*zoom,height*zoom);
 ///  image(img, 50, -150, squaresize, squaresize);
   //image(img, 25, 25, 50, 50, 25, 25, 50, 50);
-image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN)
-
+    
 }
 
-
+//resizeCanvas(500, 500);
 
 function draw(){
+  background(155);
+  image(img, imagex, imagey,width*zoom,height*zoom);
+  strokeWeight(4);
+  stroke("red");
+  line(imagex + startx*zoom,0,imagex + startx*zoom,height);
+  line(0,imagey + y1*zoom,width,imagey + y1*zoom);
+  stroke("blue");
+  line(imagex + stopx*zoom,0,imagex + stopx*zoom,height);
+  line(0,imagey + y0*zoom,width,imagey + y0*zoom);
 
-  frameRate(30);
+//  strokeWeight(20);
+  stroke("purple");
+  for(index = 0;index < timewave.length - 1;index++){
+    line(imagex + (startx + index)*zoom,imagey + zoom*y0 - zoom*timewave[index],imagex + (startx + index + 1)*zoom,imagey + zoom*y0 - zoom*timewave[index + 1]);
+//    line(imagex + (startx + index)*zoom,300,imagex + (startx + index + 1)*zoom,300);
+    
+  }
+
+//  frameRate(30);
+//    image(img, 0, 0,width,height);
+  //  line(0,0,100,100);
+}
+
+function keyPressed() {
+  if (key === 'w') {
+        imagey += deltaxy;
+  }
+  if (key === 's') {
+        imagey -= deltaxy;
+  }
+  if (key === 'a') {
+        imagex += deltaxy;
+  }
+  if (key === 'd') {
+        imagex -= deltaxy;
+  }
+  if (key === 'q') {
+        zoom *= 2;
+        imagey *= 2;
+        imagex *= 2;
+  }
+  if (key === 'e') {
+        zoom /= 2;
+        imagey /= 2;
+        imagex /= 2;
+
+  }
+  if (key === 'z') {
+        startx -= 1;
+        document.getElementById("startxinput").value = startx.toString();
+  }
+  if (key === 'x') {
+        startx += 1;
+        document.getElementById("startxinput").value = startx.toString();
+  }
+  if (key === 'c') {
+        stopx -= 1;
+        document.getElementById("stopxinput").value = stopx.toString();
+  }
+  if (key === 'v') {
+        stopx += 1;
+  }
+  if (key === 'i') {
+        timewave[timewave.length-1] += 1;
+  }
+  if (key === 'k') {
+        timewave[timewave.length-1] -= 1;
+  }
+
+  if (keyCode === 040) {//space bar
+     timewave.push(timewave[timewave.length-1]);
+  }
+  if (keyCode === BACKSPACE) {
+    // Code to run.
+    timewave.pop();
+  }
+
+  if (keyCode === ENTER) {
+    // Code to run.
+    
+  }
+
 
 }
 
 
-/*
-image(img, dx, dy, dWidth, dHeight, sx, sy, [sWidth], [sHeight], [fit], [xAlign], [yAlign])
-img
-p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture:
 
-image to display.
-x
-Number:
+timewave = [];
+var httpc = new XMLHttpRequest();
+httpc.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200) {
+        timewave = JSON.parse(this.responseText);
+    }
+};
+httpc.open("GET", "fileloader.php?filename=timewave.txt", true);
+httpc.send();
 
-x-coordinate of the top-left corner of the image.
-y
-Number:
+function savetimewave(){
 
-y-coordinate of the top-left corner of the image.
-width
-Number:
+    var url = "filesaver.php";        
+    var httpc = new XMLHttpRequest();
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(JSON.stringify(timewave,null,"    "))+"&filename=timewave.txt");//send text to filesaver.php
 
-width to draw the image.
-height
-Number:
-
-height to draw the image.
-dx
-Number:
-
-the x-coordinate of the destination rectangle in which to draw the source image
-dy
-Number:
-
-the y-coordinate of the destination rectangle in which to draw the source image
-dWidth
-Number:
-
-the width of the destination rectangle
-dHeight
-Number:
-
-the height of the destination rectangle
-sx
-Number:
-
-the x-coordinate of the subsection of the source image to draw into the destination rectangle
-sy
-Number:
-
-the y-coordinate of the subsection of the source image to draw into the destination rectangle
-sWidth
-Number:
-
-the width of the subsection of the source image to draw into the destination rectangle
-sHeight
-Number:
-
-the height of the subsection of the source image to draw into the destination rectangle
-fit
-Constant:
-
-either CONTAIN or COVER
-xAlign
-Constant:
-
-either LEFT, RIGHT or CENTER default is CENTER
-yAlign
-Constant:
-
-either TOP, BOTTOM or CENTER default is CENTER
-*/
-
+}
 </script>
 <STYLE>
     H1{
@@ -124,6 +193,9 @@ either TOP, BOTTOM or CENTER default is CENTER
     }
     a{
         color:blue;
+    }
+    main canvas{
+        border:solid;
     }
 </STYLE>
 
