@@ -24,17 +24,18 @@
 
 <table>
     <tr>
-        <td>START X:</td>
+        <td>START TIME:</td>
         <td>
             <input id = "startxinput">
         </td>
     </tr>
     <tr>
-        <td>STOP X:</td>
+        <td>STOP TIME:</td>
         <td>
             <input id = "stopxinput">
         </td>
     </tr>
+
     <tr>
         <td>
             TIMEWAVE: 
@@ -43,6 +44,7 @@
             <INPUT ID = "timewaveinput">
         </TD>
     </tr>
+    
 </table>
 
 <script>
@@ -54,22 +56,35 @@ function preload() {
   img = loadImage('dataplot.png');
 }
 
-imagex = 0;
-imagey = 0;
-deltaxy = 100;
-zoom = 1;
-startx = 117;
-stopx = 417;
-y0 = 400;
-y1 = 200;
-y1value = 10;
-y0value = 0;
+currentjson = {};
+
+var httpc3 = new XMLHttpRequest();
+httpc3.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200) {
+        currentjson = JSON.parse(this.responseText);
+    }
+};
+httpc3.open("GET", "fileloader.php?filename=currentjson.txt", true);
+httpc3.send();
+
+/*
+currentjson.imagex = 0;
+currentjson.imagey = 0;
+currentjson.deltaxy = 100;
+currentjson.zoom = 1;
+currentjson.startx = 117;
+currentjson.stopx = 417;
+currentjson.y0 = 400;
+currentjson.y1 = 200;
+currentjson.y1value = 10;
+currentjson.y0value = 0;
+*/
 
 timewave = [0];
 
 function setup() {
 
-  createCanvas(800, 600);    
+  createCanvas(img.width, img.height);    
 //  image(img, -50, 0, width, height, 0, 0, img.width, img.height, CONTAIN)
  // image(img, imagex, imagey,width*zoom,height*zoom);
 ///  image(img, 50, -150, squaresize, squaresize);
@@ -81,19 +96,32 @@ function setup() {
 
 function draw(){
   background(155);
-  image(img, imagex, imagey,width*zoom,height*zoom);
+  image(img,0,0,width,height);
   strokeWeight(4);
+  if(tstartmode){
+      currentjson.startx = mouseX;
+  }
+  if(tstopmode){
+      currentjson.stopx = mouseX;
+  }
+  if(y0mode){
+      currentjson.y0 = mouseY;
+  }
+  if(y1mode){
+      currentjson.y1 = mouseY;
+  }
+
   stroke("red");
-  line(imagex + startx*zoom,0,imagex + startx*zoom,height);
-  line(0,imagey + y1*zoom,width,imagey + y1*zoom);
+  line(currentjson.startx,0,currentjson.startx,height);
+  line(0,currentjson.y1,width,currentjson.y1);
   stroke("blue");
-  line(imagex + stopx*zoom,0,imagex + stopx*zoom,height);
-  line(0,imagey + y0*zoom,width,imagey + y0*zoom);
+  line(currentjson.stopx,0,currentjson.stopx,height);
+  line(0,currentjson.y0,width,currentjson.y0);
 
 //  strokeWeight(20);
   stroke("purple");
   for(index = 0;index < timewave.length - 1;index++){
-    line(imagex + (startx + index)*zoom,imagey + zoom*y0 - zoom*timewave[index],imagex + (startx + index + 1)*zoom,imagey + zoom*y0 - zoom*timewave[index + 1]);
+    line(currentjson.imagex + (currentjson.startx + index)*currentjson.zoom,currentjson.imagey + currentjson.zoom*currentjson.y0 - currentjson.zoom*timewave[index],currentjson.imagex + (currentjson.startx + index + 1)*currentjson.zoom,currentjson.imagey + currentjson.zoom*currentjson.y0 - currentjson.zoom*timewave[index + 1]);
 //    line(imagex + (startx + index)*zoom,300,imagex + (startx + index + 1)*zoom,300);
     
   }
@@ -103,51 +131,27 @@ function draw(){
   //  line(0,0,100,100);
 }
 
+tstartmode = false;
+tstopmode = false;
+y0mode = false;
+y1mode = false;
+
 function keyPressed() {
-  if (key === 'w') {
-        imagey += deltaxy;
+
+
+  if (key === 'a') {
+    tstartmode = !tstartmode;
   }
   if (key === 's') {
-        imagey -= deltaxy;
-  }
-  if (key === 'a') {
-        imagex += deltaxy;
+    tstopmode = !tstopmode;
   }
   if (key === 'd') {
-        imagex -= deltaxy;
+    y0mode = !y0mode;
   }
-  if (key === 'q') {
-        zoom *= 2;
-        imagey *= 2;
-        imagex *= 2;
+  if (key === 'f') {
+    y1mode = !y1mode;
   }
-  if (key === 'e') {
-        zoom /= 2;
-        imagey /= 2;
-        imagex /= 2;
-
-  }
-  if (key === 'z') {
-        startx -= 1;
-        document.getElementById("startxinput").value = startx.toString();
-  }
-  if (key === 'x') {
-        startx += 1;
-        document.getElementById("startxinput").value = startx.toString();
-  }
-  if (key === 'c') {
-        stopx -= 1;
-        document.getElementById("stopxinput").value = stopx.toString();
-  }
-  if (key === 'v') {
-        stopx += 1;
-  }
-  if (key === 'i') {
-        timewave[timewave.length-1] += 1;
-  }
-  if (key === 'k') {
-        timewave[timewave.length-1] -= 1;
-  }
+  
 
   if (keyCode === 040) {//space bar
      timewave.push(timewave[timewave.length-1]);
@@ -162,7 +166,8 @@ function keyPressed() {
     
   }
 
-
+  savejson();
+  savetimewave();
 }
 
 
@@ -186,6 +191,17 @@ function savetimewave(){
     httpc.send("data="+encodeURIComponent(JSON.stringify(timewave,null,"    "))+"&filename=timewave.txt");//send text to filesaver.php
 
 }
+
+function savejson(){
+
+    var url = "filesaver.php";        
+    var httpc2 = new XMLHttpRequest();
+    httpc2.open("POST", url, true);
+    httpc2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc2.send("data="+encodeURIComponent(JSON.stringify(currentjson,null,"    "))+"&filename=currentjson.txt");//send text to filesaver.php
+
+}
+
 </script>
 <STYLE>
     H1{
