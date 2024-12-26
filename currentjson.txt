@@ -3,10 +3,17 @@
     "imagey": 0,
     "deltaxy": 100,
     "zoom": 0.5,
-    "startx": 163,
-    "stopx": 1056,
-    "y0": 444.6666717529297,
-    "y1": 159.6666717529297,
+    "startx": 162,
+    "stopx": 1054,
+    "y0": 443.6666717529297,
+    "y1": 161.6666717529297,
     "y1value": 10,
-    "y0value": 0
+    "y0value": 0,
+    "starttime": 0,
+    "stoptime": 4e-11,
+    "w0": 0,
+    "w1": 0.15,
+    "unit": "mA",
+    "deltax": 1,
+    "wunit": "mA"
 }

@@ -19,23 +19,41 @@
             
             <h2>
             <a href = "edit.html">EDIT THIS PAGE</a>
-                
             </h2>
+            
 
 <table>
     <tr>
-        <td>START TIME:</td>
+        <td>START TIME [SECONDS]:</td>
         <td>
-            <input id = "startxinput">
+            <input id = "starttimeinput">
         </td>
+        <td>STOP TIME [SECONDS]:</td>
+        <td>
+            <input id = "stoptimeinput">
+        </td>
+        <td>
+            DELTAX [PIXELS]
+        </td>
+        <TD>
+            <INPUT id = "deltaxinput">
+        </TD>
     </tr>
     <tr>
-        <td>STOP TIME:</td>
+        <td>W0:</td>
         <td>
-            <input id = "stopxinput">
+            <input id = "w0input">
+        </td>
+        <td>W1:</td>
+        <td>
+            <input id = "w1input">
+        </td>
+        <td>W UNITS:</td>
+        <td>
+            <input id = "wunitinput">
         </td>
     </tr>
-
+    
     <tr>
         <td>
             TIMEWAVE: 
@@ -57,16 +75,29 @@ function preload() {
 }
 
 currentjson = {};
+textsize = 25;
 
 var httpc3 = new XMLHttpRequest();
 httpc3.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200) {
         currentjson = JSON.parse(this.responseText);
+        loadjsonvals();
     }
 };
 httpc3.open("GET", "fileloader.php?filename=currentjson.txt", true);
 httpc3.send();
 
+
+function loadjsonvals(){
+
+    document.getElementById("starttimeinput").value = currentjson.starttime;
+    document.getElementById("stoptimeinput").value = currentjson.stoptime;
+    document.getElementById("deltaxinput").value = currentjson.deltax;
+    document.getElementById("wunitinput").value = currentjson.wunit;
+    document.getElementById("w0input").value = currentjson.w0;
+    document.getElementById("w1input").value = currentjson.w1;
+
+}
 /*
 currentjson.imagex = 0;
 currentjson.imagey = 0;
@@ -110,21 +141,36 @@ function draw(){
   if(y1mode){
       currentjson.y1 = mouseY;
   }
-
   stroke("red");
+  fill("red")
   line(currentjson.startx,0,currentjson.startx,height);
-  line(0,currentjson.y1,width,currentjson.y1);
-  stroke("blue");
-  line(currentjson.stopx,0,currentjson.stopx,height);
+  textSize(textsize);
   line(0,currentjson.y0,width,currentjson.y0);
+  strokeWeight(1);
+//textAlign(LEFT);
+  text("START TIME",currentjson.startx + 0.25*textsize,height - textsize);
+  text("W0",0.25*textsize,currentjson.y0 - 0.25*textsize);
+  stroke("blue");
+  fill("blue");
+  strokeWeight(4);
+  line(currentjson.stopx,0,currentjson.stopx,height);
+  line(0,currentjson.y1,width,currentjson.y1);
+  strokeWeight(1);
+  text("STOP TIME",currentjson.stopx -6*textsize,height - textsize);
+  text("W1",0.25*textsize,currentjson.y1 - 0.25*textsize);
+  
 
 //  strokeWeight(20);
   stroke("purple");
   for(index = 0;index < timewave.length - 1;index++){
-    line(currentjson.imagex + (currentjson.startx + index)*currentjson.zoom,currentjson.imagey + currentjson.zoom*currentjson.y0 - currentjson.zoom*timewave[index],currentjson.imagex + (currentjson.startx + index + 1)*currentjson.zoom,currentjson.imagey + currentjson.zoom*currentjson.y0 - currentjson.zoom*timewave[index + 1]);
+    line(currentjson.startx + index,timewave[index],currentjson.startx + index + 1,timewave[index + 1]);
 //    line(imagex + (startx + index)*zoom,300,imagex + (startx + index + 1)*zoom,300);
     
   }
+  if(gomode){
+    line(currentjson.startx + timewave.length - 1,timewave[timewave.length - 1],mouseX,mouseY);    
+  }
+
 
 //  frameRate(30);
 //    image(img, 0, 0,width,height);
@@ -135,7 +181,7 @@ tstartmode = false;
 tstopmode = false;
 y0mode = false;
 y1mode = false;
-
+gomode = false;
 function keyPressed() {
 
 
@@ -150,6 +196,9 @@ function keyPressed() {
   }
   if (key === 'f') {
     y1mode = !y1mode;
+  }
+  if (key === 'g') {
+    gomode = !gomode;
   }
   
 
