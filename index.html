@@ -98,6 +98,12 @@ function loadjsonvals(){
     document.getElementById("w1input").value = currentjson.w1;
 
 }
+
+
+document.getElementById("deltaxinput").onchange = function(){
+    currentjson.deltax = parseInt(this.value);    
+}
+
 /*
 currentjson.imagex = 0;
 currentjson.imagey = 0;
@@ -124,7 +130,8 @@ function setup() {
 }
 
 //resizeCanvas(500, 500);
-
+// pink = #ff2cb4
+timeindex = 0;
 function draw(){
   background(155);
   image(img,0,0,width,height);
@@ -162,19 +169,36 @@ function draw(){
 
 //  strokeWeight(20);
   stroke("purple");
-  for(index = 0;index < timewave.length - 1;index++){
-    line(currentjson.startx + index,timewave[index],currentjson.startx + index + 1,timewave[index + 1]);
-//    line(imagex + (startx + index)*zoom,300,imagex + (startx + index + 1)*zoom,300);
-    
+  strokeWeight(4);
+
+  for(index = 0;index < timewave.length;index++){
+    line(currentjson.startx + index*currentjson.deltax,timewave[index],currentjson.startx + (index + 1)*currentjson.deltax,timewave[index + 1]);
+
   }
+    strokeWeight(1);
+
   if(gomode){
-    line(currentjson.startx + timewave.length - 1,timewave[timewave.length - 1],mouseX,mouseY);    
+     if(timewave.length > 0){
+        line(currentjson.startx + (timewave.length - 1)*currentjson.deltax,timewave[timewave.length - 1],mouseX,mouseY);    
+     }
+     else{
+         line(0,mouseY,width,mouseY);
+     }
   }
 
 
 //  frameRate(30);
 //    image(img, 0, 0,width,height);
   //  line(0,0,100,100);
+    stroke("#ff2cb4");
+    fill("#ff2cb4");
+    circle(currentjson.startx + timeindex, timewave[timeindex -  1], 30);
+
+  timeindex++;
+  if(timeindex > timewave.length - 1){
+      timeindex = 0;
+  }
+  
 }
 
 tstartmode = false;
@@ -203,7 +227,15 @@ function keyPressed() {
   
 
   if (keyCode === 040) {//space bar
-     timewave.push(timewave[timewave.length-1]);
+    if(gomode && mouseX > currentjson.startx + currentjson.deltax*timewave.length){
+        if(timewave.length > 0){
+            slope = (mouseY - timewave[timewave.length - 1])/(mouseX - (currentjson.startx + currentjson.deltax*timewave.length));
+            timewave.push(timewave[timewave.length - 1] + currentjson.deltax*slope);
+        }
+        else{
+            timewave.push(mouseY);
+        }
+    } 
   }
   if (keyCode === BACKSPACE) {
     // Code to run.
