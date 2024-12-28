@@ -102,7 +102,32 @@ function loadjsonvals(){
 
 document.getElementById("deltaxinput").onchange = function(){
     currentjson.deltax = parseInt(this.value);    
+    savejson();
 }
+
+document.getElementById("starttimeinput").onchange = function(){
+   currentjson.starttime = parseFloat(this.value);    
+   savejson();
+}
+
+document.getElementById("stoptimeinput").onchange = function(){
+   currentjson.stoptime = parseFloat(this.value);    
+   savejson();
+}
+
+document.getElementById("wunitinput").onchange = function(){
+   currentjson.wunit = this.value;    
+   savejson();
+}
+document.getElementById("w0input").onchange = function(){
+   currentjson.w0 = parseInt(this.value);    
+   savejson();
+}
+document.getElementById("w1input").onchange = function(){
+   currentjson.w1 = parseInt(this.value);    
+   savejson();
+}
+
 
 /*
 currentjson.imagex = 0;
@@ -135,6 +160,9 @@ timeindex = 0;
 function draw(){
   background(155);
   image(img,0,0,width,height);
+  if(runmode){
+      background(0);
+  }
   strokeWeight(4);
   if(tstartmode){
       currentjson.startx = mouseX;
@@ -156,7 +184,7 @@ function draw(){
   strokeWeight(1);
 //textAlign(LEFT);
   text("START TIME",currentjson.startx + 0.25*textsize,height - textsize);
-  text("W0",0.25*textsize,currentjson.y0 - 0.25*textsize);
+  text("W0 = " + currentjson.w0.toString() + " " + currentjson.wunit,0.25*textsize,currentjson.y0 - 0.25*textsize);
   stroke("blue");
   fill("blue");
   strokeWeight(4);
@@ -164,7 +192,7 @@ function draw(){
   line(0,currentjson.y1,width,currentjson.y1);
   strokeWeight(1);
   text("STOP TIME",currentjson.stopx -6*textsize,height - textsize);
-  text("W1",0.25*textsize,currentjson.y1 - 0.25*textsize);
+  text("W1 = " + currentjson.w1.toString() + " " + currentjson.wunit,0.25*textsize,currentjson.y1 - 0.25*textsize);
   
 
 //  strokeWeight(20);
@@ -195,6 +223,8 @@ function draw(){
     circle(currentjson.startx + timeindex, timewave[timeindex -  1], 30);
 
   timeindex++;
+  picoseconds = Math.round(timeindex*1e12*(currentjson.stoptime - currentjson.starttime)/(currentjson.stopx - currentjson.startx));//picoseconds 
+  text(picoseconds.toString() + " picoseconds",400,50);
   if(timeindex > timewave.length - 1){
       timeindex = 0;
   }
@@ -206,6 +236,7 @@ tstopmode = false;
 y0mode = false;
 y1mode = false;
 gomode = false;
+runmode = false;
 function keyPressed() {
 
 
@@ -242,8 +273,9 @@ function keyPressed() {
     timewave.pop();
   }
 
-  if (keyCode === ENTER) {
+  if (key === 'r') {
     // Code to run.
+    runmode = !runmode;
     
   }
 
@@ -270,7 +302,7 @@ function savetimewave(){
     httpc.open("POST", url, true);
     httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     httpc.send("data="+encodeURIComponent(JSON.stringify(timewave,null,"    "))+"&filename=timewave.txt");//send text to filesaver.php
-
+    document.getElementById("timewaveinput").value = JSON.stringify(timewave);
 }
 
 function savejson(){
